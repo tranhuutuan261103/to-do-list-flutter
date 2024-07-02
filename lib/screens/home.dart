@@ -1,17 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_list/constants/colors.dart';
+
+import '../model/todo.dart';
+import '../constants/colors.dart';
+import '../widgets/todo_item.dart';
 
 class Home extends StatelessWidget {
   // ignore: use_super_parameters
-  const Home({Key? key}) : super(key: key);
+  Home({Key? key}) : super(key: key);
+
+  final todoList = ToDo.todoList();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
-      body: const Text('This is a Home Page'),
-    );
+        appBar: _buildAppBar(),
+        body: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 15,
+          ),
+          child: Column(
+            children: [
+              searchBox(),
+              Expanded(
+                child: ListView(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 20, bottom: 20),
+                      child: const Text('All Todos',
+                          style: TextStyle(
+                              fontSize: 30,
+                              color: tdBlack,
+                              fontWeight: FontWeight.w500)),
+                    ),
+                    ...todoList
+                        .map((todo) => ToDoItem(
+                              key: ValueKey(todo.id),
+                              todo: todo,))
+                  ],
+              ))
+            ],
+          ),
+        ));
   }
+}
+
+Widget searchBox() {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: const TextField(
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.all(0),
+        prefixIcon: Icon(Icons.search, color: tdBlack, size: 20),
+        prefixIconConstraints: BoxConstraints(minWidth: 25, maxHeight: 20),
+        border: InputBorder.none,
+        hintText: 'Search',
+        hintStyle: TextStyle(color: tdGrey),
+      ),
+    ),
+  );
 }
 
 AppBar _buildAppBar() {
