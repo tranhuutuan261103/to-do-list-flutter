@@ -14,33 +14,85 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: _buildAppBar(),
-        body: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 15,
-          ),
-          child: Column(
-            children: [
-              searchBox(),
-              Expanded(
-                child: ListView(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 20, bottom: 20),
-                      child: const Text('All Todos',
+        body: Stack(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 15,
+              ),
+              child: Column(
+                children: [
+                  searchBox(),
+                  Expanded(
+                      child: ListView(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 20, bottom: 20),
+                        child: const Text('All Todos',
+                            style: TextStyle(
+                                fontSize: 30,
+                                color: tdBlack,
+                                fontWeight: FontWeight.w500)),
+                      ),
+                      ...todoList.map((todo) => ToDoItem(
+                            key: ValueKey(todo.id),
+                            todo: todo,
+                          ))
+                    ],
+                  ))
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                          margin: const EdgeInsets.only(
+                              left: 20, right: 20, bottom: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: const [
+                              BoxShadow(
+                                  color: Colors.grey,
+                                  offset: Offset(0.0, 0.0),
+                                  blurRadius: 5.0,
+                                  spreadRadius: 0.0),
+                            ],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const TextField(
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(10),
+                              border: InputBorder.none,
+                              hintText: 'Add a new task',
+                              hintStyle: TextStyle(color: tdGrey),
+                            ),
+                          ))),
+                  Container(
+                    margin: const EdgeInsets.only(right: 20, bottom: 10),
+                    child: ElevatedButton(
+                      onPressed: () => print('Add Task'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: tdBlue,
+                        minimumSize: const Size(60, 60),
+                        elevation: 10,
+                      ),
+                      child: const Text('+',
                           style: TextStyle(
-                              fontSize: 30,
-                              color: tdBlack,
-                              fontWeight: FontWeight.w500)),
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold)),
                     ),
-                    ...todoList
-                        .map((todo) => ToDoItem(
-                              key: ValueKey(todo.id),
-                              todo: todo,))
-                  ],
-              ))
-            ],
-          ),
+                  )
+                ],
+              ),
+            )
+          ],
         ));
   }
 }
