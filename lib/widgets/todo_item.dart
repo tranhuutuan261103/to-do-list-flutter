@@ -5,16 +5,18 @@ import '../model/todo.dart';
 
 class ToDoItem extends StatelessWidget {
   final ToDo todo;
+  final Function(ToDo) onToDoChanged;
+  final Function(ToDo) onToDoDeleted;
 
   // ignore: use_super_parameters
-  const ToDoItem({Key? key, required this.todo}) : super(key: key);
+  const ToDoItem({Key? key, required this.todo, required this.onToDoChanged, required this.onToDoDeleted}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: ListTile(
-          onTap: () => print("Task 1"),
+          onTap: () => onToDoChanged(todo),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -46,7 +48,7 @@ class ToDoItem extends StatelessWidget {
             child: IconButton(
               icon: const Icon(Icons.delete, color: Colors.white),
               iconSize: 18,
-              onPressed: () => {print("Delete Task 1")},
+              onPressed: () => onToDoDeleted(todo),
             ),
           )),
     );

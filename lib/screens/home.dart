@@ -4,11 +4,25 @@ import '../model/todo.dart';
 import '../constants/colors.dart';
 import '../widgets/todo_item.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   // ignore: use_super_parameters
-  Home({Key? key}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
+  @override
+  // ignore: library_private_types_in_public_api
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   final todoList = ToDo.todoList();
+  List<ToDo> _filteredList = [];
+  final _toDoController = TextEditingController();
+
+  @override
+  void initState() {
+    _filteredList = todoList;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +49,11 @@ class Home extends StatelessWidget {
                                 color: tdBlack,
                                 fontWeight: FontWeight.w500)),
                       ),
-                      ...todoList.map((todo) => ToDoItem(
+                      ..._filteredList.map((todo) => ToDoItem(
                             key: ValueKey(todo.id),
                             todo: todo,
+                            onToDoChanged: _handleToDoChange,
+                            onToDoDeleted: _handleDeleteToDoItem,
                           ))
                     ],
                   ))
@@ -65,8 +81,9 @@ class Home extends StatelessWidget {
                             ],
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const TextField(
-                            decoration: InputDecoration(
+                          child: TextField(
+                            controller: _toDoController,
+                            decoration: const InputDecoration(
                               contentPadding: EdgeInsets.all(10),
                               border: InputBorder.none,
                               hintText: 'Add a new task',
@@ -76,7 +93,7 @@ class Home extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.only(right: 20, bottom: 10),
                     child: ElevatedButton(
-                      onPressed: () => print('Add Task'),
+                      onPressed: () => _addToDoItem(_toDoController.text),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: tdBlue,
                         minimumSize: const Size(60, 60),
@@ -95,50 +112,84 @@ class Home extends StatelessWidget {
           ],
         ));
   }
-}
 
-Widget searchBox() {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: const TextField(
-      decoration: InputDecoration(
-        contentPadding: EdgeInsets.all(0),
-        prefixIcon: Icon(Icons.search, color: tdBlack, size: 20),
-        prefixIconConstraints: BoxConstraints(minWidth: 25, maxHeight: 20),
-        border: InputBorder.none,
-        hintText: 'Search',
-        hintStyle: TextStyle(color: tdGrey),
+  void _handleToDoChange(ToDo todo) {
+    setState(() {
+      todo.isCompleted = !todo.isCompleted;
+    });
+  }
+
+  void _handleDeleteToDoItem(ToDo todoDeleted) {
+    setState(() {
+      todoList.removeWhere((todo) => todo.id == todoDeleted.id);
+    });
+  }
+
+  void _addToDoItem(String toDoTitle) {
+    setState(() {
+      final newToDo = ToDo(
+        id: DateTime.now().microsecondsSinceEpoch.toString(),
+        title: toDoTitle,
+        isCompleted: false,
+      );
+      todoList.add(newToDo);
+    });
+    _toDoController.clear();
+  }
+
+  void _filterList(String query) {
+    setState(() {
+      _filteredList = todoList
+          .where((todo) =>
+              todo.title.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+  Widget searchBox() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
       ),
-    ),
-  );
-}
+      child: TextField(
+        onChanged: (value) => _filterList(value),
+        decoration: const InputDecoration(
+          contentPadding: EdgeInsets.all(0),
+          prefixIcon: Icon(Icons.search, color: tdBlack, size: 20),
+          prefixIconConstraints: BoxConstraints(minWidth: 25, maxHeight: 20),
+          border: InputBorder.none,
+          hintText: 'Search',
+          hintStyle: TextStyle(color: tdGrey),
+        ),
+      ),
+    );
+  }
 
-AppBar _buildAppBar() {
-  return AppBar(
-    backgroundColor: tdBGColor,
-    elevation: 0,
-    title: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const Icon(
-          Icons.menu,
-          color: tdBlack,
-          size: 30,
-        ),
-        const SizedBox(width: 10),
-        SizedBox(
-          height: 40,
-          width: 40,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.asset('assets/images/avatar.jpg', fit: BoxFit.cover),
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: tdBGColor,
+      elevation: 0,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Icon(
+            Icons.menu,
+            color: tdBlack,
+            size: 30,
           ),
-        ),
-      ],
-    ),
-  );
+          const SizedBox(width: 10),
+          SizedBox(
+            height: 40,
+            width: 40,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset('assets/images/avatar.jpg', fit: BoxFit.cover),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
