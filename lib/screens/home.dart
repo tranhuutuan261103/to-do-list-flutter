@@ -4,6 +4,8 @@ import '../model/todo.dart';
 import '../constants/colors.dart';
 import '../widgets/todo_item.dart';
 
+import '../services/todo_service.dart';
+
 class Home extends StatefulWidget {
   // ignore: use_super_parameters
   const Home({Key? key}) : super(key: key);
@@ -14,13 +16,22 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final todoList = ToDo.todoList();
+  List<ToDo> todoList = [];
   List<ToDo> _filteredList = [];
   final _toDoController = TextEditingController();
 
+  Future<void> getData() async {
+    final toDoService = ToDoService();
+    final data = await toDoService.getToDoList();
+    setState(() {
+      todoList = data;
+      _filteredList = todoList;
+    });
+  }
+
   @override
   void initState() {
-    _filteredList = todoList;
+    getData();
     super.initState();
   }
 
