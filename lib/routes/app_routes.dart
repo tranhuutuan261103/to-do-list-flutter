@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:to_do_list/providers/todo_provider.dart';
 
 import "../screens/home.dart";
+import '../services/todo_service.dart';
 
 class AppRoutes extends StatefulWidget {
   const AppRoutes({super.key});
@@ -19,6 +22,20 @@ class _AppRoutesState extends State<AppRoutes> {
 
   final pageStorageBucket = PageStorageBucket();
   Widget currentScreen = const Home();
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    final todoService = ToDoService();
+    final data = await todoService.getToDoList();
+    if (mounted) {
+      context.read<ToDoProvider>().initToDoList(data);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
