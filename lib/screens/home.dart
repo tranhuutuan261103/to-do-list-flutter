@@ -125,7 +125,7 @@ class _HomeState extends State<Home> {
   }
 
   void _handleToDoChange(ToDo todo) {
-    // context.read<ToDoProvider>().toggleToDoStatus(todo);
+    context.read<ToDoProvider>().toggleToDoStatus(todo);
   }
 
   void _handleDeleteToDoItem(ToDo todoDeleted) {

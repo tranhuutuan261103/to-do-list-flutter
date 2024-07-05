@@ -22,4 +22,12 @@ class ToDoProvider extends ChangeNotifier {
     _toDoList.remove(item);
     notifyListeners();
   }
+
+  void toggleToDoStatus(ToDo item) {
+    final index = _toDoList.indexWhere((i) => i.id == item.id);
+    if (index != -1) {
+      _toDoList[index].isCompleted = !_toDoList[index].isCompleted;
+      notifyListeners();
+    }
+  }
 }
