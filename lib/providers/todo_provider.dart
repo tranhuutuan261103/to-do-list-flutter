@@ -15,6 +15,7 @@ class ToDoProvider extends ChangeNotifier {
 
   void addToDoItem(ToDo item) {
     _toDoList.add(item);
+    print('Added: ${item.title}');
     notifyListeners();
   }
 

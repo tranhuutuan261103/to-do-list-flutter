@@ -23,4 +23,23 @@ class ToDoService {
       return <ToDo>[];
     }
   }
+
+  Future<ToDo?> addToDoItem(String title) async {
+    try {
+      final DocumentReference<Map<String, dynamic>> docRef =
+          await _firestore.collection('todos').add(<String, dynamic>{
+        'title': title,
+        'isCompleted': false,
+      });
+      return ToDo(
+        id: docRef.id,
+        title: title,
+        isCompleted: false,
+      );
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error: $e');
+      return null;
+    }
+  }
 }
