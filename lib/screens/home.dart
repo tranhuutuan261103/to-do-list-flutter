@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:to_do_list/providers/todo_provider.dart';
 
 import '../model/todo.dart';
+import '../services/todo_service.dart';
 import '../constants/colors.dart';
 import '../widgets/todo_item.dart';
 
@@ -134,12 +135,13 @@ class _HomeState extends State<Home> {
   }
 
   void _addToDoItem(String toDoTitle) {
-    final newToDo = ToDo(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      title: toDoTitle,
-      isCompleted: false,
+    if (toDoTitle.isEmpty) return;
+    ToDoService().addToDoItem(toDoTitle).then(
+      (newToDo) => {
+        if (newToDo != null)
+          context.read<ToDoProvider>().addToDoItem(newToDo),
+      },
     );
-    context.read<ToDoProvider>().addToDoItem(newToDo);
     _toDoController.clear();
     _filterList('');
   }

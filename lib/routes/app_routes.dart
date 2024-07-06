@@ -44,29 +44,36 @@ class _AppRoutesState extends State<AppRoutes> {
         bucket: pageStorageBucket,
         child: currentScreen,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        enableFeedback: false,
-        currentIndex: currentTab,
-        onTap: (index) {
-          setState(() {
-            currentTab = index;
-            currentScreen = screens[index];
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.white,
+          splashFactory: NoSplash.splashFactory,
+          highlightColor: Colors.transparent,
+        ),
+        child: BottomNavigationBar(
+          enableFeedback: false,
+          currentIndex: currentTab,
+          onTap: (index) {
+            setState(() {
+              currentTab = index;
+              currentScreen = screens[index];
+            });
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.search),
+              label: 'Search',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }
