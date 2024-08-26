@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:to_do_list/providers/todo_provider.dart';
 
 import "../screens/home.dart";
+import '../screens/code_editor.dart';
 import '../services/todo_service.dart';
 
 class AppRoutes extends StatefulWidget {
@@ -16,7 +17,7 @@ class _AppRoutesState extends State<AppRoutes> {
   int currentTab = 0;
   final List<Widget> screens = [
     const Home(),
-    const Placeholder(),
+    const CodeEditor(),
     const Placeholder(),
   ];
 
@@ -65,8 +66,8 @@ class _AppRoutesState extends State<AppRoutes> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'Search',
+              icon: Icon(Icons.code),
+              label: 'Code Editor',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
