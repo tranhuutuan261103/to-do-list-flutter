@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_code_editor/flutter_code_editor.dart';
-import 'package:flutter_highlight/themes/monokai-sublime.dart';
-import 'package:highlight/languages/python.dart';
+import '../utils/code_editor/languages/python.dart';
+import '../utils/code_editor/themes/vs_dart.dart';
 
 class CodeEditor extends StatefulWidget {
   const CodeEditor({super.key});
@@ -23,12 +24,21 @@ class _CodeEditorState extends State<CodeEditor> {
   String userInput = ''; // To store the user input
 
   bool isExecuting = false;
+  bool isDispose = false;
 
   final text = '''
 import matplotlib.pyplot as plt
 
 n = int(input('Enter the number of elements: '))
 data = [int(input(f'Enter element {i + 1}: ')) for i in range(n)]
+
+def tri_recursion(k):
+    if k > 0:
+        result = k + tri_recursion(k - 1)
+        print(result)
+    else:
+        result = 0
+    return result
 
 x = list(range(1, n + 1))
 y = data
@@ -40,6 +50,64 @@ plt.ylabel('y-axis')
 
 # Display the plot
 plt.show()
+
+import matplotlib.pyplot as plt
+
+# This function adds two numbers
+def add(x, y):
+    return x + y
+
+# This function subtracts two numbers
+def subtract(x, y):
+    return x - y
+
+# This function multiplies two numbers
+def multiply(x, y):
+    return x * y
+
+# This function divides two numbers
+def divide(x, y):
+    return x / y
+
+
+print("Select operation.")
+print("1.Add")
+print("2.Subtract")
+print("3.Multiply")
+print("4.Divide")
+
+while True:
+    # take input from the user
+    choice = input("Enter choice(1/2/3/4): ")
+
+    # check if choice is one of the four options
+    if choice in ('1', '2', '3', '4'):
+        try:
+            num1 = float(input("Enter first number: "))
+            num2 = float(input("Enter second number: "))
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            continue
+
+        if choice == '1':
+            print(num1, "+", num2, "=", add(num1, num2))
+
+        elif choice == '2':
+            print(num1, "-", num2, "=", subtract(num1, num2))
+
+        elif choice == '3':
+            print(num1, "*", num2, "=", multiply(num1, num2))
+
+        elif choice == '4':
+            print(num1, "/", num2, "=", divide(num1, num2))
+        
+        # check if user wants another calculation
+        # break the while loop if answer is no
+        next_calculation = input("Let's do next calculation? (yes/no): ")
+        if next_calculation == "no":
+          break
+    else:
+        print("Invalid Input")
 ''';
 
   @override
@@ -55,8 +123,8 @@ plt.show()
     socket.connect();
 
     socket.onDisconnect((_) => {
-          // check if out of contex
-          if (mounted)
+          // check if out of context
+          if (mounted && !isDispose)
             {
               setState(() {
                 output += 'Disconnected from server.\n';
@@ -156,6 +224,7 @@ plt.show()
 
   @override
   void dispose() {
+    isDispose = true;
     socket.dispose(); // Hủy kết nối socket khi không cần thiết
     super.dispose();
   }
@@ -173,11 +242,19 @@ plt.show()
             child: Column(
               children: [
                 CodeTheme(
-                  data: CodeThemeData(styles: monokaiSublimeTheme),
+                  data: CodeThemeData(styles: vsDart),
                   child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
                     child: CodeField(
                       controller: controller,
                       minLines: 12,
+                      gutterStyle: GutterStyle.none,
+                      wrap: true,
+                      textStyle: GoogleFonts.jetBrainsMono(
+                        fontSize: 12,
+                        height: 1.5,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ),
                 ),
