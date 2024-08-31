@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:to_do_list/firebase_options.dart';
+import 'package:syntax_highlight/syntax_highlight.dart';
 
 import './routes/app_routes.dart';
 import './providers/todo_provider.dart';
@@ -12,6 +13,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await Highlighter.initialize(['dart', 'yaml', 'sql']);
   runApp(ChangeNotifierProvider(
     create: (context) => ToDoProvider(),
     child: const MyApp(),

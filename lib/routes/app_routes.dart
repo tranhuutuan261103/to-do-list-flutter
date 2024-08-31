@@ -4,6 +4,7 @@ import 'package:to_do_list/providers/todo_provider.dart';
 
 import "../screens/home.dart";
 import '../screens/code_editor.dart';
+import '../screens/code_viewer.dart';
 import '../services/todo_service.dart';
 
 class AppRoutes extends StatefulWidget {
@@ -18,6 +19,7 @@ class _AppRoutesState extends State<AppRoutes> {
   final List<Widget> screens = [
     const Home(),
     const CodeEditor(),
+    const CodeViewer(),
     const Placeholder(),
   ];
 
@@ -60,6 +62,8 @@ class _AppRoutesState extends State<AppRoutes> {
               currentScreen = screens[index];
             });
           },
+          unselectedItemColor: const Color.fromARGB(255, 255, 226, 181), // Set the selected item color to red
+          selectedItemColor: const Color.fromARGB(255, 254, 164, 10), // Set the unselected item color to red
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
@@ -68,6 +72,10 @@ class _AppRoutesState extends State<AppRoutes> {
             BottomNavigationBarItem(
               icon: Icon(Icons.code),
               label: 'Code Editor',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.code),
+              label: 'Code Viewer',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
