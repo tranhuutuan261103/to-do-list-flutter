@@ -5,6 +5,7 @@ import 'package:to_do_list/providers/todo_provider.dart';
 import "../screens/home.dart";
 import '../screens/code_editor.dart';
 import '../screens/code_viewer.dart';
+import '../screens/profile.dart';
 import '../services/todo_service.dart';
 
 class AppRoutes extends StatefulWidget {
@@ -20,7 +21,7 @@ class _AppRoutesState extends State<AppRoutes> {
     const Home(),
     const CodeEditor(),
     const CodeViewer(),
-    const Placeholder(),
+    const Profile(),
   ];
 
   final pageStorageBucket = PageStorageBucket();

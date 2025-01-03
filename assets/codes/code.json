@@ -1,0 +1,9 @@
+{
+    "name": "Code",
+    "description": "Code is a set of instructions that a computer can understand.",
+    "price": 100,
+    "user": {
+        "name": "John Doe",
+        "email": " [email protected]"
+    }
+}
