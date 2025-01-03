@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:re_editor/re_editor.dart';
 
-class ContextMenuItemWidget extends PopupMenuItem<void> implements PreferredSizeWidget {
-
+class ContextMenuItemWidget extends PopupMenuItem<void>
+    implements PreferredSizeWidget {
   ContextMenuItemWidget({
-    Key? key,
+    super.key,
     required String text,
-    required VoidCallback onTap,
+    required VoidCallback super.onTap,
   }) : super(
-    key: key,
-    onTap: onTap,
-    child: Text(text)
-  );
+          child: Text(text),
+        );
 
   @override
   Size get preferredSize => const Size(150, 25);
-
 }
 
 class ContextMenuControllerImpl implements SelectionToolbarController {
-
   const ContextMenuControllerImpl();
 
   @override
-  void hide(BuildContext context) {
-  }
+  void hide(BuildContext context) {}
 
   @override
   void show({
@@ -35,35 +31,94 @@ class ContextMenuControllerImpl implements SelectionToolbarController {
     required LayerLink layerLink,
     required ValueNotifier<bool> visibility,
   }) {
-    showMenu(
-      context: context,
-      position: RelativeRect.fromSize(anchors.primaryAnchor & const Size(150, double.infinity),
-        MediaQuery.of(context).size),
-      items: [
-        ContextMenuItemWidget(
-          text: 'Cut',
-          onTap: () {
-            controller.cut();
-          },
-        ),
-        ContextMenuItemWidget(
-          text: 'Copy',
-          onTap: () {
-            // show selected text
-            String d = controller.selectedText;
-            print(controller.text);
-            controller.copy();
-          },
-        ),
-        ContextMenuItemWidget(
-          text: 'Paste',
-          onTap: () {
-            
-            controller.paste();
-          },
-        ),
-      ]
+    OverlayEntry? menuOverlay;
+
+    String selectedText = controller.selectedText;
+
+    void removeMenu() {
+      menuOverlay?.remove();
+      menuOverlay = null;
+    }
+
+    menuOverlay = OverlayEntry(
+      builder: (context) => Stack(
+        children: [
+          // GestureDetector to detect taps outside the menu
+          GestureDetector(
+            onTap: removeMenu,
+            behavior: HitTestBehavior.translucent,
+            child: Container(
+              color: Colors.transparent, // Invisible background
+            ),
+          ),
+          Positioned(
+            height: 40,
+            child: CompositedTransformFollower(
+              link: layerLink,
+              showWhenUnlinked: false,
+              offset: const Offset(0, 20), // Position menu below anchor
+              child: Material(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                child: Menu(
+                  onItemSelected: (value) {
+                    if (value == "Copy") {
+                      if (selectedText.isNotEmpty) {
+                        Clipboard.setData(ClipboardData(text: selectedText));
+                      }
+                    } else if (value == "Paste") {
+                      controller.paste();
+                    }
+                    removeMenu();
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    Overlay.of(context).insert(menuOverlay!);
+  }
+}
+
+class Menu extends StatelessWidget {
+  final void Function(String) onItemSelected;
+
+  const Menu({Key? key, required this.onItemSelected}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          // Copy button with splash effect
+          InkWell(
+            onTap: () => onItemSelected("Copy"),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              child: const Text("Copy"),
+            ),
+          ),
+          // Paste button with splash effect
+          InkWell(
+            onTap: () => onItemSelected("Paste"),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              child: const Text("Paste"),
+            ),
+          ),
+        ],
+      ),
     );
   }
-
 }
